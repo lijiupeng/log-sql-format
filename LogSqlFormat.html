@@ -42,8 +42,9 @@
                 paramArr[i] = Object.is(parseInt(content), NaN) ? content : parseInt(content)
 
             }
-            // 把实际值替换问号
-            let index = 0;
+            // 把实际值替换问号 
+            // todo 这个起始值可能有的不是1
+            let index = 1;
             while (true) {
                 if (sql.indexOf("?") == -1) {
                     break;
