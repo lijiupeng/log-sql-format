@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>sql日志格式化</title>
+    <style>
+        #formatBefore {
+            width: 100%;
+            height: 400px;
+
+        }
+
+        #formatAfter {
+            width: 100%;
+            height: 400px;
+        }
+
+        button {
+            margin: 50px;
+            width: 200px;
+            height: 60px;
+        }
+    </style>
+    <script type="text/javascript">
+        let startStr = "parameter ["
+        let endStr = "] as"
+        let sqlPrefix = "Hibernate:"
+        function formatSql() {
+            let dom = document.getElementById("formatBefore")
+            let text = dom.value
+            let lineText = text.split("\n")
+            let sql = lineText[0].replace(sqlPrefix, "")
+            let paramArr = []
+            // 获取每行的值
+            for (let index = 1; index < lineText.length; index++) {
+                const element = lineText[index]
+                let startIndex = element.indexOf(startStr) + startStr.length
+                let endIndex = element.indexOf(endStr)
+                let i = parseInt(element.slice(startIndex, endIndex))
+                let content = element.slice(element.lastIndexOf("[") + 1, element.lastIndexOf("]"))
+                paramArr[i] = Object.is(parseInt(content), NaN) ? content : parseInt(content)
+
+            }
+            // 把实际值替换问号
+            let index = 0;
+            while (true) {
+                if (sql.indexOf("?") == -1) {
+                    break;
+                }
+                sql = sql.replace("?", paramArr[index++])
+            }
+            document.getElementById("formatAfter").value = sql
+            copy(document.getElementById("formatAfter"))
+        }
+    
+        function replace(){
+            startStr =document.getElementById("startStr").value
+            endStr = document.getElementById("endStr").value
+            sqlPrefix = document.getElementById("sqlPrefix").value
+        }
+        // 自动复制
+        function copy(transfer) {
+            transfer.focus();
+            transfer.select();
+            document.execCommand('copy');
+            transfer.blur();
+            document.getElementById("copyText").style.display = "inline"
+        }
+    
+        window.onload = function() {
+            document.getElementById("formatBefore").addEventListener("input", function() {
+                document.getElementById("copyText").style.display = "none"
+            })
+        }
+    </script>
+</head>
+
+<body>
+    <div style="background-color: #DA4F49;color: #fff;font-size: 16px;padding: 10px;">提示：下列是替换关键字示例，对应颜色对应关键字 </div></div>
+    <div>
+        <p><span style="color: #006DCC;">Hibernate:</span> SELECT * FROM</p>
+        <p>2021-08-23 xx:xx:xx.xxx TRACE 17324 --- [nio-123-exec-1] x.x.x.x.sql.BasicBinder : binding 
+            <span style="color: #5BB75B;">parameter [</span>4
+            <span style="color: #FAA732;">] as</span> [BIGINT] -[xxxxx]
+        </p>
+
+    </div>
+    <div>
+        <span style="color: #006DCC;"> sql前缀: </span><input style="color: #006DCC;" id="sqlPrefix" placeholder="Hibernate:"></input>
+        <span style="color: #5BB75B;"> 实际值前缀: </span><input style="color: #5BB75B;" id="startStr" placeholder="parameter ["></input>
+        <span style="color: #FAA732;"> 实际值后缀: </span><input style="color: #FAA732;" id="endStr" placeholder="] as"></input>
+        <button onclick="replace()">替换</button>
+    </div>
+    <div>
+        <textarea id="formatBefore" placeholder="转换之前的日志信息粘贴在这里面"></textarea>
+
+    </div>
+
+    <div><button onclick="formatSql()">转换</button> <span style="display: none;color: #5BB75B;font-size: 16px;" id="copyText">已自动复制到剪贴板</span></div>
+    
+    <div>
+        <textarea id="formatAfter"></textarea>
+
+    </div>
+</body>
+
+</html>
