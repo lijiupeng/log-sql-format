@@ -39,7 +39,8 @@
                 let endIndex = element.indexOf(endStr)
                 let i = parseInt(element.slice(startIndex, endIndex))
                 let content = element.slice(element.lastIndexOf("[") + 1, element.lastIndexOf("]"))
-                paramArr[i] = Object.is(parseInt(content), NaN) ? content : parseInt(content)
+                // paramArr[i] = Object.is(parseInt(content), NaN) ? content : parseInt(content)
+                paramArr[i] = content
 
             }
             // 把实际值替换问号 
