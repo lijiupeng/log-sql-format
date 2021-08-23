@@ -3,3 +3,5 @@
 2.由于mybatis log plugin 不免费了
 
 3.写了个小工具，喜欢就star吧
+
+格式化log 里的sql
